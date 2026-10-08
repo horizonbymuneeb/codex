@@ -51,6 +51,20 @@ fn ignores_non_proc_mount_errors() {
     assert!(!is_proc_mount_failure(stderr));
 }
 
+
+#[test]
+fn detects_proc_mount_on_proc_without_newroot() {
+    // bubblewrap 0.12 prints op->dest (/proc) instead of arg1 (/newroot/proc)
+    let stderr = "bwrap: Can't mount proc on /proc: Operation not permitted";
+    assert!(is_proc_mount_failure(stderr));
+}
+
+#[test]
+fn detects_proc_mount_invalid_argument_on_proc() {
+    let stderr = "bwrap: Can't mount proc on /proc: Invalid argument";
+    assert!(is_proc_mount_failure(stderr));
+}
+
 #[test]
 fn inserts_bwrap_argv0_before_command_separator() {
     let file_system_sandbox_policy = read_only_file_system_policy();
